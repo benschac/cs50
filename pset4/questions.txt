@@ -1,0 +1,24 @@
+0.  BITMAP(BMP) = 16 Million (True Color) 
+    JPEG = 16 Million (True Color)
+    GIF = 256 Per Frame (High Color)
+    PNG = 256 Terracolors (Scientific Colors)
+1.  GIF
+2.  lossless = if all original data can be recovered when the file is uncompressed.
+    lossy = Some of the data is lost during compression.
+3.  JPEG
+4.  You're telling the system you can now use that memory again.  But You're not actually deleting anything.  To do that
+    you would need to actually overwrite the memory.
+5.  Change all of the bits to 1's
+6.  TODO
+7.  TODO
+8.  TODO
+9.  TODO
+10. TODO
+11. TODO
+12. TODO
+13. TODO
+14. TODO
+15. TODO
+16. TODO
+17. TODO
+18. TODO

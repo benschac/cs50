@@ -1,6 +1,7 @@
 //
 // breakout.c
-//
+// Benjamin Schachter
+// benschac@gmail.com
 // Computer Science 50
 // Problem Set 3
 //
@@ -32,6 +33,10 @@
 
 // lives
 #define LIVES 3
+
+// padding
+#define PADDING 4
+
 
 // prototypes
 void initBricks(GWindow window);
@@ -69,16 +74,73 @@ int main(void)
 
     // number of points initially
     int points = 0;
+    
+    double velocityX = 2.0;
+    double velocityY = 2.0;
 
     // keep playing until game over
     while (lives > 0 && bricks > 0)
     {
-        // TODO
-    }
+    
+        GEvent event = getNextEvent(MOUSE_EVENT);
 
+        if (event != NULL)
+        {
+           
+            if (getEventType(event) == MOUSE_MOVED)
+            {
+                // move paddle with Mouse Moved
+                setLocation(paddle, getX(event) - (55/2), 570);
+                add(window, paddle);
+            }
+        }
+        
+        
+        move(ball, velocityX, 0);
+        move(ball, 0, velocityY);
+
+
+
+            // bounce off right edge of window
+            if (getX(ball) + getWidth(ball) >= getWidth(window) || getX(ball) <= 0 )
+            {
+                velocityX = -velocityX;
+            }
+
+            pause(10);
+            
+            if (getY(ball) + getHeight(ball) <= 0)
+            {
+                velocityY = -velocityY;
+            }
+            
+            if ((getHeight(ball) + getY(ball) >= HEIGHT))
+            {
+                lives--;
+                setLocation(ball, (WIDTH / 2) - RADIUS,(HEIGHT / 2) - RADIUS);
+                setLocation(paddle, (WIDTH / 2) - 45, 570);
+                waitForClick();
+            }
+            pause(10);
+            
+            GObject collisionObject = detectCollision(window, ball);
+            
+            if (collisionObject != NULL && strcmp(getType(collisionObject), "GRect") == 0)
+            {
+                velocityY = -velocityY;
+                
+                if (collisionObject != paddle)
+                {
+                    removeGWindow(window, collisionObject);
+                    bricks--;
+                    points++;
+                    updateScoreboard(window, label, points);
+                }
+            }
+        
+    }
     // wait for click before exiting
     waitForClick();
-
     // game over
     closeGWindow(window);
     return 0;
@@ -89,7 +151,25 @@ int main(void)
  */
 void initBricks(GWindow window)
 {
-    // TODO
+    // done
+    int x = (PADDING + 2);
+    int y = 75;
+    
+    for(int height = 0; height < ROWS; height++)
+    {
+        char* colors[] = {"RED", "ORANGE", "YELLOW", "GREEN", "CYAN"};
+        for(int width = 0; width < COLS; width++)
+        {
+          GRect rect = newGRect(x, y, 35, 15);
+          setFilled(rect, true);
+          setColor(rect, colors[height]);
+          add(window, rect);
+          x+= (35 + PADDING);
+        }
+        y += (15 + PADDING);
+        x = (PADDING + 2);
+    }
+    
 }
 
 /**
@@ -97,8 +177,11 @@ void initBricks(GWindow window)
  */
 GOval initBall(GWindow window)
 {
-    // TODO
-    return NULL;
+    GOval ball = newGOval((WIDTH / 2) - RADIUS, (HEIGHT/2) - RADIUS,RADIUS, RADIUS);
+    setFilled(ball, true);
+    setColor(ball, "BLACK");
+    add(window, ball);
+    return ball;
 }
 
 /**
@@ -106,8 +189,12 @@ GOval initBall(GWindow window)
  */
 GRect initPaddle(GWindow window)
 {
-    // TODO
-    return NULL;
+
+    GRect paddle = newGRect((WIDTH / 2) - 45, 570, 55, 15);
+    setFilled(paddle, true);
+    setColor(paddle, "BLACK");
+    add(window, paddle);
+    return paddle;
 }
 
 /**
@@ -115,8 +202,21 @@ GRect initPaddle(GWindow window)
  */
 GLabel initScoreboard(GWindow window)
 {
-    // TODO
-    return NULL;
+    GLabel label = newGLabel("");
+    setFont(label, "SansSerif-36");
+    add(window, label);
+
+        // update label
+        setLabel(label, "0");
+
+        // center label
+        double x = (getWidth(window) - getWidth(label)) / 2;
+        double y = (getHeight(window) - getHeight(label)) / 2;
+        setLocation(label, x, y);
+
+        // linger for 100 milliseconds
+        pause(100);
+    return label;
 }
 
 /**
